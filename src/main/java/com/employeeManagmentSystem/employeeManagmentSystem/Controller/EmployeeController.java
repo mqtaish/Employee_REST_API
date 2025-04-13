@@ -1,5 +1,7 @@
 package com.employeeManagmentSystem.employeeManagmentSystem.Controller;
 
+import com.employeeManagmentSystem.employeeManagmentSystem.DTOs.CreateEmployee;
+import com.employeeManagmentSystem.employeeManagmentSystem.DTOs.UpdateEmployee;
 import com.employeeManagmentSystem.employeeManagmentSystem.Exceptions.CustomizedExceptionHandler;
 import com.employeeManagmentSystem.employeeManagmentSystem.Exceptions.GlobalExceptionHandler;
 import com.employeeManagmentSystem.employeeManagmentSystem.Exceptions.GlobalResponse;
@@ -12,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,14 +30,12 @@ public class EmployeeController {
     }
     @DeleteMapping("/employees/{employeeId}")
     public void deleteEmployee(@PathVariable  UUID employeeId){
-        System.out.println("Delete Mapping");
          employeeService.deleteEmployee(employeeId);
     }
 
 
     @PostMapping("/employees")
-    public ResponseEntity<String> createEmployee(@RequestBody @Valid Employee employee) {
-        System.out.println("test test test");
+    public ResponseEntity<String> createEmployee(@RequestBody @Valid CreateEmployee employee) {
 
         var result  = employeeService.createEmployee(employee);
 
@@ -44,9 +45,9 @@ public class EmployeeController {
     }
 
 
-    @PutMapping("/employees")
-    public ResponseEntity<Employee> updateEmployee(@RequestBody @Valid Employee employee ){
-        var updatedEmployee = employeeService.updateEmployee(employee);
+    @PutMapping("/employees/{employeeId}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID employeeId,@RequestBody @Valid UpdateEmployee employee ){
+        var updatedEmployee = employeeService.updateEmployee(employeeId, employee);
         return new ResponseEntity<Employee>(updatedEmployee, HttpStatus.OK);
     }
 
@@ -58,9 +59,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<ArrayList<Employee>> getAllEmployees() {
+    public ResponseEntity<List<Employee>> getAllEmployees() {
        var allEmployees = employeeService.getAllEmployees();
-        allEmployees.forEach(employee -> System.out.println(employee.getEmail()));
-        return new ResponseEntity<ArrayList<Employee>>(allEmployees,HttpStatus.OK);
+        return new ResponseEntity<List<Employee>>(allEmployees,HttpStatus.OK);
     }
 }

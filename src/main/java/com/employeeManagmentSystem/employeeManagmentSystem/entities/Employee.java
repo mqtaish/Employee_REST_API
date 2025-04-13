@@ -2,6 +2,7 @@ package com.employeeManagmentSystem.employeeManagmentSystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,37 +10,38 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
-
+@Entity
+@Table(name= "Employee")
 public class Employee {
     //@GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
     private UUID id;
-    @NotNull(message = "First Name is required")
-    @JsonProperty("first_name")
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
-    @NotNull(message = "Last Name is required")
+    @Column(name = "last_name", nullable = false, length = 100)
 
-    @JsonProperty("last_name")
     private String lastName;
-    @NotNull(message = "email Name is required")
-    @Email(message = "Email not in proper format")
+    @Column(name = "email", nullable = false, unique = true)
 
-    @JsonProperty("email")
     private String email;
+    @Column(name = "phone_number",  length =25)
 
-    @NotBlank(message = "Phone Number can't be blank")
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "invalid phone number format")
-    @JsonProperty("phone_number")
     private String phoneNumber;
+    @Column(name = "hire_date", nullable = false)
 
-    @JsonProperty("hire_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate hireDate;
 
+    private UUID departmentId = UUID.randomUUID();
+
+    public Employee(){}
     public Employee(UUID id, String first_name, String last_name, String email, String phone_number, LocalDate hire_date) {
         this.id = id;
         this.firstName = first_name;
