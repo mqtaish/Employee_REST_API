@@ -4,7 +4,9 @@ import com.employeeManagmentSystem.employeeManagmentSystem.DTOs.CreateEmployee;
 import com.employeeManagmentSystem.employeeManagmentSystem.DTOs.UpdateEmployee;
 import com.employeeManagmentSystem.employeeManagmentSystem.Exceptions.CustomizedExceptionHandler;
 import com.employeeManagmentSystem.employeeManagmentSystem.Exceptions.GlobalResponse;
+import com.employeeManagmentSystem.employeeManagmentSystem.Repositories.DepartmentRepo;
 import com.employeeManagmentSystem.employeeManagmentSystem.Repositories.EmployeeRepo;
+import com.employeeManagmentSystem.employeeManagmentSystem.entities.Department;
 import com.employeeManagmentSystem.employeeManagmentSystem.entities.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +19,10 @@ import java.util.UUID;
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
 
-    private ArrayList<Employee> employeeArrayList = new ArrayList<>();
     @Autowired
     private EmployeeRepo employeeRepo;
+    @Autowired
+    private DepartmentRepo departmentRepo;
     @Override
     public void deleteEmployee(UUID employeeId) {
         System.out.println("Delete Mapping");
@@ -30,18 +33,11 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public String createEmployee(CreateEmployee employeeCreateDTO) {
-        if (employeeArrayList == null) {
-            employeeArrayList = new ArrayList<>();
-        }
 
-        // Check if the employee already exists
-        boolean exists = employeeArrayList.stream()
-                .anyMatch(emp -> emp.getEmail().equals(employeeCreateDTO.email())); // Assuming email is unique
+        System.out.println("here it's create employee 2");
 
-        if (exists) {
-            return "Employee with this email already exists.";
-        }
-
+        Department department = departmentRepo.findById(employeeCreateDTO.departmentId()).
+                orElseThrow();
         // Generate unique ID (assuming Employee has a UUID field)
         Employee employee = new Employee();
       //  employee.setId(UUID.randomUUID());
@@ -50,7 +46,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         employee.setPhone_number(employeeCreateDTO.phoneNumber());
         employee.setEmail(employeeCreateDTO.email());
         employee.setHire_date(employeeCreateDTO.hireDate());
-
+        employee.setDepartment(department);
         employeeRepo.save(employee);
 
         //employeeArrayList.forEach(em -> System.out.println(em.getEmail()));

@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
@@ -39,7 +40,12 @@ public class Employee {
 
     private LocalDate hireDate;
 
-    private UUID departmentId = UUID.randomUUID();
+    @ManyToOne(fetch= FetchType.EAGER, optional = false )
+    @JoinColumn(name = "department_id", nullable = false)
+    @JsonProperty("department_id")
+    private Department department;
+
+
 
     public Employee(){}
     public Employee(UUID id, String first_name, String last_name, String email, String phone_number, LocalDate hire_date) {
@@ -97,6 +103,26 @@ public class Employee {
 
     public LocalDate getHire_date() {
         return hireDate;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setHireDate(LocalDate hireDate) {
+        this.hireDate = hireDate;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override
